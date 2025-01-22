@@ -1,0 +1,6 @@
+@SSOService_HostAddress = http://localhost:5134
+
+GET {{SSOService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
