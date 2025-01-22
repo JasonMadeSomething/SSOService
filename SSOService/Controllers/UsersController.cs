@@ -16,11 +16,13 @@ namespace SSOService.Controllers
     {
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
+        private readonly ITokenService _tokenService;
 
-        public UsersController(IUserService userService, IConfiguration configuration)
+        public UsersController(IUserService userService, IConfiguration configuration, ITokenService tokenService)
         {
             _userService = userService;
             _configuration = configuration;
+            _tokenService = tokenService;
         }
 
         [HttpPost("register")]
@@ -92,28 +94,26 @@ namespace SSOService.Controllers
                 });
             }
 
-            var claims = new[]
+            // Generate token with universal audience and scopes
+            var token = _tokenService.GenerateToken(user);
+
+            Response.Cookies.Append("AuthToken", token, new CookieOptions
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.Username)
-            };
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Domain = _configuration["Cookie:Domain"],
+                Expires = DateTime.UtcNow.AddHours(1)
+            });
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: creds);
-
-            return Ok(new LoginResponse
+            return Ok(new MessageResponse
             {
                 StatusCode = StatusCodes.Status200OK,
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                ExpiresIn = 3600 // Expiration in seconds (1 hour)
+                Message = "Login successful."
             });
         }
+
+
+
     }
 }

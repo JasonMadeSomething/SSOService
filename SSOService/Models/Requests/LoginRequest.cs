@@ -8,6 +8,8 @@ namespace SSOService.Models.Requests
 
         [Required]
         public string Password { get; set; }
+
     }
+    
 
 }
