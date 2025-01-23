@@ -56,8 +56,7 @@ namespace SSOService.Controllers
                 Username = request.Username,
                 Email = request.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                Role = "Free",
-                FreeUsageCount = 10
+                Role = "Free" 
             };
 
             await _userService.CreateUserAsync(newUser);
@@ -68,6 +67,7 @@ namespace SSOService.Controllers
                 Message = "User registered successfully."
             });
         }
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)

@@ -20,13 +20,9 @@ public class TokenService : ITokenService
     {
         new Claim(ClaimTypes.NameIdentifier, user.Id),
         new Claim(ClaimTypes.Name, user.Username),
-        new Claim("role", user.Role),
-        new Claim(JwtRegisteredClaimNames.Aud, _configuration["Jwt:Audience"]) // Single audience
+        new Claim("role", user.Role), // Include the role in the token
+        new Claim(JwtRegisteredClaimNames.Aud, _configuration["Jwt:Audience"])
     };
-
-        // Add universal scopes
-        claims.Add(new Claim("scope", "read"));
-        claims.Add(new Claim("scope", "write"));
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -40,6 +36,7 @@ public class TokenService : ITokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
 
 
 }
