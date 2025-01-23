@@ -61,7 +61,7 @@ This repository contains a Single Sign-On (SSO) service enabling centralized aut
    ```bash
    dotnet run
    ```
-   - The service will be available at `https://localhost:5134`.
+   - The service will be available at `https://localhost:44361`.
 
 5. **Testing**:
    - Use Postman to test the API endpoints (see [API Documentation](#api-documentation) below).
